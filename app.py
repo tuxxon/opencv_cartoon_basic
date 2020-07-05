@@ -40,6 +40,9 @@ def lambda_handler(event, context):
     ext = filename_set[1]
     h = basename.split("/")[1]
 
+    blockSize = event.get("blocksize", 9)
+    C = event.get("paramC", 7)
+    change_fullimage = event.get("blocksize", False)
     #
     # local files
     #
@@ -85,7 +88,15 @@ def lambda_handler(event, context):
     #
     s3.upload_file(conv_filename, BUCKET_NAME, s3_filename)
 
-    j = {}
+    j = {
+        "blockSize" : blockSize,
+        "C" : C
+    }
+    if change_fullimage != False:
+        with open(down_jsonfile,'w') as f:
+            f.write(json.dumps(j))
+        s3.upload_file(down_jsonfile, BUCKET_NAME, s3_paramfile)
+
     images = {
         "source" : S3_URL.format(
             bucketName = BUCKET_NAME, 

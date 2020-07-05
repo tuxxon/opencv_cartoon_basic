@@ -1,15 +1,20 @@
+#!/usr/bin/python3
 import cv2
 import numpy as np
 
 
-def render_basic(img_path):
+#
+#  Render a basic toon  with a image.
+#  default : blockSize = 9, C = 7
+#  
+def render_basic(img_path, blockSize=9, C=7):
 
     img = cv2.imread(img_path)
 
     # 1) Edges
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     gray = cv2.medianBlur(gray, 7)
-    edges = cv2.adaptiveThreshold(gray, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY, 9, 7)
+    edges = cv2.adaptiveThreshold(gray, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY, blockSize, C)
 
     # 2) Color
     color = cv2.bilateralFilter(img, 9, 300, 300)
@@ -31,8 +36,9 @@ def render_basic(img_path):
 
 #
 #  Render a normal toon with a image.
+#  default : blockSize = 9, C = 2
 #
-def render_lite(img_path): 
+def render_lite(img_path, blockSize=9, C=2): 
 
         img_rgb = cv2.imread(img_path) 
         img_rgb = cv2.resize(img_rgb, (1366,768)) 
@@ -74,7 +80,7 @@ def render_lite(img_path):
             img_blur, 255, 
             cv2.ADAPTIVE_THRESH_MEAN_C, 
             cv2.THRESH_BINARY,
-            9, 2
+            blockSize, C
             ) 
         #cv2.imshow("edge",img_edge) 
         #cv2.waitKey(0) 
@@ -100,5 +106,5 @@ def render_lite(img_path):
 if __name__ == '__main__':
 
     #img = cv2.imread("trump_moon.jpg")
-    cartoon = render_lite("cat.jpg")
+    cartoon = render_basic("woman.jpg")
     cv2.imwrite('catoon.jpg',cartoon)
